@@ -29,6 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */ 
 
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JDialog;
 import javax.swing.JButton;
@@ -58,11 +59,11 @@ public class DialogDemo extends JPanel {
     JLabel label;
     ImageIcon icon = createImageIcon("images/middle.gif");
     JFrame frame;
-    String simpleDialogDesc = "Some simple message dialogs";
+    String simpleDialogDesc = "Add a player to a team";
     String iconDesc = "A JOptionPane has its choice of icons";
-    String moreDialogDesc = "Some more dialogs";
+    String moreDialogDesc = "Get the current roster of a fantasy team";
     CustomDialog customDialog;
-
+    JPanel rosterGrid = null;
     static MLBLeague league;
     static FantasyLeague fantasyLeague;
     /** Creates the GUI shown inside the frame's content pane. */
@@ -73,28 +74,28 @@ public class DialogDemo extends JPanel {
         customDialog.pack();
 
         //Create the components.
-        JPanel frequentPanel = createSimpleDialogBox();
-        JPanel featurePanel = createFeatureDialogBox();
-        JPanel iconPanel = createIconDialogBox();
         label = new JLabel("Click the \"Show it!\" button"
-                           + " to bring up the selected dialog.",
-                           JLabel.CENTER);
+                + " to bring up the selected dialog.",
+                JLabel.CENTER);
+        JPanel addPlayerPanel = createAddPlayerDialogBox();
+        JPanel getTeamPanel = createGetTeamDialogBox();
+        JPanel getAvailablePlayersPanel = createGetAvailablePlayersDialogBox();
 
         //Lay them out.
         Border padding = BorderFactory.createEmptyBorder(20,20,5,20);
-        frequentPanel.setBorder(padding);
-        featurePanel.setBorder(padding);
-        iconPanel.setBorder(padding);
+        addPlayerPanel.setBorder(padding);
+        getTeamPanel.setBorder(padding);
+        getAvailablePlayersPanel.setBorder(padding);
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Simple Modal Dialogs", null,
-                          frequentPanel,
+        tabbedPane.addTab("Add Player Dialog", null,
+                          addPlayerPanel,
                           simpleDialogDesc); //tooltip text
-        tabbedPane.addTab("More Dialogs", null,
-                          featurePanel,
+        tabbedPane.addTab("Get Team Dialog", null,
+        		getTeamPanel,
                           moreDialogDesc); //tooltip text
         tabbedPane.addTab("Dialog Icons", null,
-                          iconPanel,
+        		getAvailablePlayersPanel,
                           iconDesc); //tooltip text
 
         add(tabbedPane, BorderLayout.CENTER);
@@ -119,111 +120,44 @@ public class DialogDemo extends JPanel {
     }
 
     /** Creates the panel shown by the first tab. */
-    private JPanel createSimpleDialogBox() {
-        final int numButtons = 4;
-        JRadioButton[] radioButtons = new JRadioButton[numButtons];
+    private JPanel createGetTeamDialogBox() {
+        FantasyTeam currentlySelectedTeam = null;
+        ArrayList<Component> components = new ArrayList<Component>();
+        JPanel newRosterGrid = null;
         final ButtonGroup group = new ButtonGroup();
-
-        JButton showItButton = null;
-
-        final String defaultMessageCommand = "default";
-        final String yesNoCommand = "yesno";
-        final String yeahNahCommand = "yeahnah";
-        final String yncCommand = "ync";
-
-        radioButtons[0] = new JRadioButton("OK (in the L&F's words)");
-        radioButtons[0].setActionCommand(defaultMessageCommand);
-
-        radioButtons[1] = new JRadioButton("Yes/No (in the L&F's words)");
-        radioButtons[1].setActionCommand(yesNoCommand);
-
-        radioButtons[2] = new JRadioButton("Yes/No "
-                      + "(in the programmer's words)");
-        radioButtons[2].setActionCommand(yeahNahCommand);
-
-        radioButtons[3] = new JRadioButton("Yes/No/Cancel "
-                           + "(in the programmer's words)");
-        radioButtons[3].setActionCommand(yncCommand);
-
-        for (int i = 0; i < numButtons; i++) {
-            group.add(radioButtons[i]);
-        }
-        radioButtons[0].setSelected(true);
-
-        showItButton = new JButton("Show it!");
-        showItButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String command = group.getSelection().getActionCommand();
-
-                //ok dialog
-                if (command == defaultMessageCommand) {
-                    JOptionPane.showMessageDialog(frame,
-                                "Eggs aren't supposed to be green.");
-
-                //yes/no dialog
-                } else if (command == yesNoCommand) {
-                    int n = JOptionPane.showConfirmDialog(
-                            frame, "Would you like green eggs and ham?",
-                            "An Inane Question",
-                            JOptionPane.YES_NO_OPTION);
-                    if (n == JOptionPane.YES_OPTION) {
-                        setLabel("Ewww!");
-                    } else if (n == JOptionPane.NO_OPTION) {
-                        setLabel("Me neither!");
-                    } else {
-                        setLabel("Come on -- tell me!");
-                    }
-
-                //yes/no (not in those words)
-                } else if (command == yeahNahCommand) {
-                    Object[] options = {"Yes, please", "No way!"};
-                    int n = JOptionPane.showOptionDialog(frame,
-                                    "Would you like green eggs and ham?",
-                                    "A Silly Question",
-                                    JOptionPane.YES_NO_OPTION,
-                                    JOptionPane.QUESTION_MESSAGE,
-                                    null,
-                                    options,
-                                    options[0]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        setLabel("You're kidding!");
-                    } else if (n == JOptionPane.NO_OPTION) {
-                        setLabel("I don't like them, either.");
-                    } else {
-                        setLabel("Come on -- 'fess up!");
-                    }
-
-                //yes/no/cancel (not in those words)
-                } else if (command == yncCommand) {
-                    Object[] options = {"Yes, please",
-                                        "No, thanks",
-                                        "No eggs, no ham!"};
-                    int n = JOptionPane.showOptionDialog(frame,
-                                    "Would you like some green eggs to go "
-                                    + "with that ham?",
-                                    "A Silly Question",
-                                    JOptionPane.YES_NO_CANCEL_OPTION,
-                                    JOptionPane.QUESTION_MESSAGE,
-                                    null,
-                                    options,
-                                    options[2]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        setLabel("Here you go: green eggs and ham!");
-                    } else if (n == JOptionPane.NO_OPTION) {
-                        setLabel("OK, just the ham, then.");
-                    } else if (n == JOptionPane.CANCEL_OPTION) {
-                        setLabel("Well, I'm certainly not going to eat them!");
-                    } else {
-                        setLabel("Please tell me what you want!");
-                    }
-                }
-                return;
+        
+    	ArrayList<FantasyTeam> teams = fantasyLeague.getTeams();
+        FantasyTeam[] possibilities = teams.toArray(new FantasyTeam[teams.size()]);
+        components.add(new JLabel("Team:"));
+    	final JComboBox<FantasyTeam> teamBox = new JComboBox(possibilities);
+    	components.add(teamBox);
+    	currentlySelectedTeam = (FantasyTeam)teamBox.getSelectedItem();
+    	ArrayList<String> rosterStringList = null;
+    	if(currentlySelectedTeam != null)
+    	{
+    		rosterStringList =currentlySelectedTeam.getRosterStrings(); 
+    		
+    	} else
+    	{
+    		rosterStringList = FantasyTeam.getRosterHeaderStrings();
+    	}
+    	rosterGrid = createColumnedGrid(rosterStringList.toArray(new String[rosterStringList.size()]), FantasyTeam.NUM_COLUMNS_ROSTER);
+    	components.add(rosterGrid);
+    	teamBox.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent e) {
+	            	FantasyTeam currentlySelectedTeam = (FantasyTeam)teamBox.getSelectedItem();
+	            	if(currentlySelectedTeam != null)
+	            	{
+	            		ArrayList<String> rosterStringList =currentlySelectedTeam.getRosterStrings();
+		            	rosterGrid = createColumnedGrid(rosterStringList.toArray(new String[rosterStringList.size()]), FantasyTeam.NUM_COLUMNS_ROSTER);
+		            	rosterGrid.repaint();
+	            	}
+	            }
             }
-        });
+    	);
 
-        return createPane(simpleDialogDesc + ":",
-                          radioButtons,
-                          showItButton);
+        return createPane(components,
+                          null);
     }
 
     /**
@@ -231,27 +165,38 @@ public class DialogDemo extends JPanel {
      * to create a pane containing a description, a single column
      * of radio buttons, and the Show it! button.
      */
-    private JPanel createPane(String description,
-                              JRadioButton[] radioButtons,
+    private JPanel createPane(ArrayList<Component> components,
                               JButton showButton) {
 
-        int numChoices = radioButtons.length;
         JPanel box = new JPanel();
-        JLabel label = new JLabel(description);
 
+      
         box.setLayout(new BoxLayout(box, BoxLayout.PAGE_AXIS));
         box.add(label);
 
-        for (int i = 0; i < numChoices; i++) {
-            box.add(radioButtons[i]);
+        for (Component c:components) {
+            box.add(c);
         }
 
         JPanel pane = new JPanel(new BorderLayout());
         pane.add(box, BorderLayout.PAGE_START);
-        pane.add(showButton, BorderLayout.PAGE_END);
+        if(showButton != null)
+        {
+	        pane.add(showButton, BorderLayout.PAGE_END);
+        }
         return pane;
     }
 
+    private JPanel createColumnedGrid(String[] strings,
+    								  int numColumns)
+	{
+    	JPanel grid = new JPanel(new GridLayout(0, numColumns));
+    	for(String s:strings)
+    	{
+    		grid.add(new JLabel(s));
+    	}
+    	return grid;
+	}
     /**
      * Like createPane, but creates a pane with 2 columns of radio
      * buttons.  The number of buttons passed in *must* be even.
@@ -287,7 +232,7 @@ public class DialogDemo extends JPanel {
      * you can specify the icon (using similar code) for any other
      * kind of dialog, as well.
      */
-    private JPanel createIconDialogBox() {
+    private JPanel createGetAvailablePlayersDialogBox() {
         JButton showItButton = null;
 
         final int numButtons = 6;
@@ -378,208 +323,22 @@ public class DialogDemo extends JPanel {
     }
 
     /** Creates the panel shown by the second tab. */
-    private JPanel createFeatureDialogBox() {
-        final int numButtons = 5;
-        JRadioButton[] radioButtons = new JRadioButton[numButtons];
-        final ButtonGroup group = new ButtonGroup();
-
+    private JPanel createAddPlayerDialogBox() {
+    	ArrayList<Component> components = new ArrayList<Component>();
+    	ArrayList<Player> players = FantasyDraft.getAvailablePlayers();
+        Player[] possibilities = players.toArray(new Player[players.size()]);
+        components.add(new JLabel(moreDialogDesc));
+    	JComboBox<Player> player = new JComboBox(possibilities);
+    	components.add(player);
         JButton showItButton = null;
-
-        final String pickOneCommand = "pickone";
-        final String textEnteredCommand = "textfield";
-        final String nonAutoCommand = "nonautooption";
-        final String customOptionCommand = "customoption";
-        final String nonModalCommand = "nonmodal";
-
-        radioButtons[0] = new JRadioButton("Pick one of several choices");
-        radioButtons[0].setActionCommand(pickOneCommand);
-
-        radioButtons[1] = new JRadioButton("Enter some text");
-        radioButtons[1].setActionCommand(textEnteredCommand);
-
-        radioButtons[2] = new JRadioButton("Non-auto-closing dialog");
-        radioButtons[2].setActionCommand(nonAutoCommand);
-
-        radioButtons[3] = new JRadioButton("Input-validating dialog "
-                                           + "(with custom message area)");
-        radioButtons[3].setActionCommand(customOptionCommand);
-
-        radioButtons[4] = new JRadioButton("Non-modal dialog");
-        radioButtons[4].setActionCommand(nonModalCommand);
-
-        for (int i = 0; i < numButtons; i++) {
-            group.add(radioButtons[i]);
-        }
-        radioButtons[0].setSelected(true);
 
         showItButton = new JButton("Show it!");
         showItButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String command = group.getSelection().getActionCommand();
-
-                //pick one of many
-                if (command == pickOneCommand) {
-                	ArrayList<Player> players = FantasyDraft.getAvailablePlayers();
-                    Object[] possibilities = players.toArray();
-                    Player p = (Player)JOptionPane.showInputDialog(
-                                        frame,
-                                        "Complete the sentence:\n"
-                                        + "\"Green eggs and...\"",
-                                        "Customized Dialog",
-                                        JOptionPane.PLAIN_MESSAGE,
-                                        icon,
-                                        possibilities,
-                                        "ham");
-             
-                    //If a string was returned, say so.
-                    if (p != null) {
-                        setLabel("Green eggs and... " + p.toString() + "!");
-                        return;
-                    }
-
-                    //If you're here, the return value was null/empty.
-                    setLabel("Come on, finish the sentence!");
-
-                //text input
-                } else if (command == textEnteredCommand) {
-                    String s = (String)JOptionPane.showInputDialog(
-                                        frame,
-                                        "Complete the sentence:\n"
-                                        + "\"Green eggs and...\"",
-                                        "Customized Dialog",
-                                        JOptionPane.PLAIN_MESSAGE,
-                                        icon,
-                                        null,
-                                        "ham");
-
-                    //If a string was returned, say so.
-                    if ((s != null) && (s.length() > 0)) {
-                        setLabel("Green eggs and... " + s + "!");
-                        return;
-                    }
-
-                    //If you're here, the return value was null/empty.
-                    setLabel("Come on, finish the sentence!");
-
-                //non-auto-closing dialog
-                } else if (command == nonAutoCommand) {
-                    final JOptionPane optionPane = new JOptionPane(
-                                    "The only way to close this dialog is by\n"
-                                    + "pressing one of the following buttons.\n"
-                                    + "Do you understand?",
-                                    JOptionPane.QUESTION_MESSAGE,
-                                    JOptionPane.YES_NO_OPTION);
-
-                    //You can't use pane.createDialog() because that
-                    //method sets up the JDialog with a property change
-                    //listener that automatically closes the window
-                    //when a button is clicked.
-                    final JDialog dialog = new JDialog(frame,
-                                                 "Click a button",
-                                                 true);
-                    dialog.setContentPane(optionPane);
-                    dialog.setDefaultCloseOperation(
-                        JDialog.DO_NOTHING_ON_CLOSE);
-                    dialog.addWindowListener(new WindowAdapter() {
-                        public void windowClosing(WindowEvent we) {
-                            setLabel("Thwarted user attempt to close window.");
-                        }
-                    });
-                    optionPane.addPropertyChangeListener(
-                        new PropertyChangeListener() {
-                            public void propertyChange(PropertyChangeEvent e) {
-                                String prop = e.getPropertyName();
-
-                                if (dialog.isVisible()
-                                 && (e.getSource() == optionPane)
-                                 && (JOptionPane.VALUE_PROPERTY.equals(prop))) {
-                                    //If you were going to check something
-                                    //before closing the window, you'd do
-                                    //it here.
-                                    dialog.setVisible(false);
-                                }
-                            }
-                        });
-                    dialog.pack();
-                    dialog.setLocationRelativeTo(frame);
-                    dialog.setVisible(true);
-
-                    int value = ((Integer)optionPane.getValue()).intValue();
-                    if (value == JOptionPane.YES_OPTION) {
-                        setLabel("Good.");
-                    } else if (value == JOptionPane.NO_OPTION) {
-                        setLabel("Try using the window decorations "
-                                 + "to close the non-auto-closing dialog. "
-                                 + "You can't!");
-                    } else {
-                        setLabel("Window unavoidably closed (ESC?).");
-                    }
-
-                //non-auto-closing dialog with custom message area
-                //NOTE: if you don't intend to check the input,
-                //then just use showInputDialog instead.
-                } else if (command == customOptionCommand) {
-                    customDialog.setLocationRelativeTo(frame);
-                    customDialog.setVisible(true);
-
-                    String s = customDialog.getValidatedText();
-                    if (s != null) {
-                        //The text is valid.
-                        setLabel("Congratulations!  "
-                                 + "You entered \""
-                                 + s
-                                 + "\".");
-                    }
-
-                //non-modal dialog
-                } else if (command == nonModalCommand) {
-                    //Create the dialog.
-                    final JDialog dialog = new JDialog(frame,
-                                                       "A Non-Modal Dialog");
-
-                    //Add contents to it. It must have a close button,
-                    //since some L&Fs (notably Java/Metal) don't provide one
-                    //in the window decorations for dialogs.
-                    JLabel label = new JLabel("<html><p align=center>"
-                        + "This is a non-modal dialog.<br>"
-                        + "You can have one or more of these up<br>"
-                        + "and still use the main window.");
-                    label.setHorizontalAlignment(JLabel.CENTER);
-                    Font font = label.getFont();
-                    label.setFont(label.getFont().deriveFont(font.PLAIN,
-                                                             14.0f));
-
-                    JButton closeButton = new JButton("Close");
-                    closeButton.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            dialog.setVisible(false);
-                            dialog.dispose();
-                        }
-                    });
-                    JPanel closePanel = new JPanel();
-                    closePanel.setLayout(new BoxLayout(closePanel,
-                                                       BoxLayout.LINE_AXIS));
-                    closePanel.add(Box.createHorizontalGlue());
-                    closePanel.add(closeButton);
-                    closePanel.setBorder(BorderFactory.
-                        createEmptyBorder(0,0,5,5));
-
-                    JPanel contentPane = new JPanel(new BorderLayout());
-                    contentPane.add(label, BorderLayout.CENTER);
-                    contentPane.add(closePanel, BorderLayout.PAGE_END);
-                    contentPane.setOpaque(true);
-                    dialog.setContentPane(contentPane);
-
-                    //Show it.
-                    dialog.setSize(new Dimension(300, 150));
-                    dialog.setLocationRelativeTo(frame);
-                    dialog.setVisible(true);
-                }
             }
         });
-
-        return createPane(moreDialogDesc + ":",
-                          radioButtons,
+        
+        return createPane(components,
                           showItButton);
     }
 

@@ -16,5 +16,7 @@ public abstract class Team implements Comparable<Team>{
 	public int compareTo(Team o) {
 		return teamName.compareTo(o.teamName);
 	}
-
+	public String toString(){
+		return teamName;
+	}
 }

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collection;
 
 
 public class FantasyLineup {
@@ -500,6 +501,59 @@ public class FantasyLineup {
 		{
 			ret_val += "DH" + System.lineSeparator();
 		}
+		return ret_val;
+	}
+	
+	private ArrayList<String> getPlayerStrings(Player player)
+	{
+		if(player!=null)
+		{
+			return player.getPlayerStrings();
+		} else
+		{
+			return Player.getNullPlayerStrings();
+		}
+	}
+
+	public ArrayList<String> getLineupStrings() {
+		ArrayList<String> ret_val = new ArrayList<String>();
+		int i;
+		for(i=0;i<NUMBER_OF_CATCHERS;i++)
+		{
+			ret_val.add("C");
+			if(catchers.size()>i)
+			{
+				ret_val.addAll(catchers.get(i).getPlayerStrings());
+			} else 
+			{
+				ret_val.addAll(Player.getNullPlayerStrings());
+			}
+		}
+		ret_val.add("1B");
+		ret_val.addAll(getPlayerStrings(firstBase));
+		ret_val.add("3B");
+		ret_val.addAll(getPlayerStrings(thirdBase));
+		ret_val.add("CR");
+		ret_val.addAll(getPlayerStrings(corner));
+		ret_val.add("2B");
+		ret_val.addAll(getPlayerStrings(secondBase));
+		ret_val.add("SS");
+		ret_val.addAll(getPlayerStrings(shortstop));
+		ret_val.add("MI");
+		ret_val.addAll(getPlayerStrings(middleInfield));
+		for(i=0;i<NUMBER_OF_OUTFIELDERS;i++)
+		{
+			ret_val.add("OF");
+			if(outfield.size()>i)
+			{
+				ret_val.addAll(outfield.get(i).getPlayerStrings());
+			} else
+			{
+				ret_val.addAll(Player.getNullPlayerStrings());
+			}
+		}
+		ret_val.add("DH");
+		ret_val.addAll(getPlayerStrings(designatedHitter));
 		return ret_val;
 	}
 }

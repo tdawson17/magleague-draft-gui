@@ -4,6 +4,8 @@ public class FantasyTeam extends Team {
 	FantasyPitchingStaff pitchers;
 	FantasyLineup hitters;
 	ArrayList<Player> minorLeaguers;
+	public static int NUM_COLUMNS_ROSTER = 3;
+	public static int MAX_MINOR_LEAGUERS = 3;
 	public static int TEAM_SALARY = 260;
 	private static Hitter DUMMY_C = new Hitter(new PlayerName(), "", null, Hitter.GAMES_REQUIRED, 0, 0, 0, 0, 0, 0);
 	private static Hitter DUMMY_1B = new Hitter(new PlayerName(), "", null, 0, Hitter.GAMES_REQUIRED, 0, 0, 0, 0, 0);
@@ -65,6 +67,35 @@ public class FantasyTeam extends Team {
 		for(Player p:minorLeaguers)
 		{
 			ret_val += "ML" + delimiter + p.getFullString(delimiter) + System.lineSeparator();
+		}
+		return ret_val;
+	}
+	
+	public static ArrayList<String> getRosterHeaderStrings()
+	{
+		ArrayList<String> ret_val = new ArrayList<String>();
+		ret_val.add("POS");
+		ret_val.add("Name");
+		ret_val.add("Sal");
+		return ret_val;
+	}
+	public ArrayList<String> getRosterStrings()
+	{
+		ArrayList<String> ret_val = FantasyTeam.getRosterHeaderStrings();
+		ret_val.addAll(hitters.getLineupStrings());
+		ret_val.addAll(pitchers.getPitchingStaffStrings());
+		for(int i=0;i<MAX_MINOR_LEAGUERS;i++)
+		{
+			ret_val.add("ML");
+			if(i<minorLeaguers.size())
+			{
+				ret_val.add(minorLeaguers.get(i).name.toString());
+				ret_val.add("");
+			} else
+			{
+				ret_val.add("");
+				ret_val.add("");
+			}
 		}
 		return ret_val;
 	}

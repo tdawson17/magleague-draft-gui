@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collection;
 
 
 public class FantasyPitchingStaff {
@@ -40,6 +41,22 @@ public class FantasyPitchingStaff {
 			} else 
 			{
 				ret_val += "P" + System.lineSeparator();
+			}
+		}
+		return ret_val;
+	}
+
+	public ArrayList<String> getPitchingStaffStrings() {
+		ArrayList<String> ret_val = new ArrayList<String>();
+		for(int i=0;i<NUMBER_OF_PITCHERS;i++)
+		{
+			ret_val.add("P");
+			if(pitchers.size()>i)
+			{
+				ret_val.addAll(pitchers.get(i).getPlayerStrings());
+			} else 
+			{
+				ret_val.addAll(Player.getNullPlayerStrings());
 			}
 		}
 		return ret_val;

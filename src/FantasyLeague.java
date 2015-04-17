@@ -36,4 +36,9 @@ public class FantasyLeague {
 		}
 		return ret_val;
 	}
+	
+	public ArrayList<FantasyTeam> getTeams()
+	{
+		return fantasyTeams;
+	}
 }

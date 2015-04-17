@@ -86,6 +86,7 @@ public class Player implements Comparable<Player>{
 		
 		return ret_val;
 	}
+	
 	public String getPlayerHeader(String delimiter) {
 		String ret_val = "Name" + delimiter + "MLBTeam" + delimiter + "FantasyTeam" + delimiter + "Salary";
 		for(Projection p:this.projections)
@@ -95,4 +96,25 @@ public class Player implements Comparable<Player>{
 		return ret_val;
 	}
 	
+	public ArrayList<String> getPlayerStrings()
+	{
+		ArrayList<String> ret_val = new ArrayList<String>();
+		ret_val.add(name.toString());
+		if(salary > 0)
+		{
+			ret_val.add(Integer.toString(salary));
+		} else
+		{
+			ret_val.add("");
+		}
+		return ret_val;
+	}
+	
+	public static ArrayList<String> getNullPlayerStrings()
+	{
+		ArrayList<String> ret_val = new ArrayList<String>();
+		ret_val.add("");
+		ret_val.add("");
+		return ret_val;
+	}
 }
